@@ -1,0 +1,13 @@
+CREATE TABLE User_Master(userId VARCHAR2(6) PRIMARY KEY,userName VARCHAR2(15),userPassword VARCHAR2(50),
+userType VARCHAR2(10));
+
+CREATE TABLE Department(Dept_ID int PRIMARY KEY, Dept_Name VARCHAR2(50) );
+
+
+CREATE TABLE Employee(Empno Number(6), Ename VARCHAR2(25), job VARCHAR2(50), mgr NUMBER(4), hiredate DATE, Dept_ID NUMBER,
+FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_Id)); 
+
+CREATE TABLE Asset( AssetId NUMBER PRIMARY KEY, AssetName VARCHAR2(25), AssetDes VARCHAR2(25), Quantity NUMBER, Status VARCHAR2(15));
+
+CREATE TABLE Asset_Allocation(AllocationId NUMBER PRIMARY KEY, AssetId NUMBER, Empno NUMBER, Allocation_date DATE, Release_date DATE,
+FOREIGN KEY (AssetId) REFERENCES Asset(AssetId));

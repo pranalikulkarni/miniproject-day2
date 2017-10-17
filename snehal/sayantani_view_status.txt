@@ -1,0 +1,172 @@
+--DAO IMPLEMENTATION CLASS--
+
+
+
+package com.cg.asset.dao;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+
+import com.cg.asset.bean.AssetBean;
+import com.cg.asset.dbUtil.DBUtil;
+
+
+public class AssetDaoImpl implements IAssetDao {
+
+	@Override
+	public ArrayList<AssetBean> retrieveDetails(int id) {
+		
+		ArrayList<AssetBean> list = new ArrayList<AssetBean>();
+		try {
+			Connection conn = DBUtil.getConnection();
+			
+		
+		String sql = "SELECT * FROM Asset s JOIN Asset_Allocation l ON s.Assetid = l.Assetid WHERE AllocationId = ?";
+;
+		
+		PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setInt(1, id);
+      
+		ResultSet rs = pst.executeQuery();
+		
+		
+		
+		
+		while(rs.next())
+		{
+			
+			
+			int AssetId = rs.getInt(1);
+			String AssetName = rs.getString(2);
+			String AssetDes = rs.getString(3);
+			int Quantity = rs.getInt(4);
+			String Status =rs.getString(5);
+			int AllocationId= rs.getInt(6);
+			int EmpNo  = rs.getInt(8);
+			Date AllocationDate = rs.getDate(9);
+			Date ReleaseDate = rs.getDate(10);
+			
+			
+			
+			list.add(new AssetBean(AllocationId,AssetId,EmpNo,AllocationDate,ReleaseDate,AssetName,AssetDes,Quantity,Status));
+			
+		}
+		
+		}
+		
+		catch (IOException | SQLException e) {
+			
+			System.out.println(e.getMessage());
+		}
+		
+		return list;
+	}
+	
+
+}
+
+
+
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+--DAO INTERFACE--
+
+package com.cg.asset.dao;
+
+import java.util.ArrayList;
+
+import com.cg.asset.bean.AssetBean;
+
+public interface IAssetDao {
+
+	public ArrayList<AssetBean> retrieveDetails(int id);
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+--UI LAYER
+
+package com.cg.asset.ui;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+import com.cg.asset.bean.AssetBean;
+import com.cg.asset.service.AssetServiceImpl;
+import com.cg.asset.service.IAssetService;
+
+public class Client {
+	
+
+	static Scanner sc = new Scanner(System.in);
+	static IAssetService service = new AssetServiceImpl();
+	
+	public static void main(String[] args) {
+		
+		while(true)
+		{
+			
+			System.out.println("1.View Request Details on Id");
+			System.out.println("0.Exit");
+			System.out.println("*********************");
+			System.out.println("Please enter a choice: ");
+			System.out.println("**************************************");
+			int choice = sc.nextInt();
+			switch(choice)
+			{
+			case 1:viewRequestDetails();
+			break;
+			
+			case 0:System.exit(0); 		
+			break;
+			
+			}}
+		
+		
+		
+		
+	}
+
+	private static void viewRequestDetails() {
+		
+		System.out.println("Enter Request/Allocation Id: ");
+		int id = sc.nextInt();
+		
+		
+		ArrayList<AssetBean> list = service.retrieveDetails(id);
+	
+		System.out.println(list);
+		if(list.isEmpty())
+		{
+			System.out.println("Sorry no details found.");
+		}
+		else
+		{
+		for(AssetBean b:list) 
+		{
+			System.out.println("AllocationId: "+b.getAllocationId());
+			System.out.println("AssetId : "+b.getAssetId());
+			System.out.println("EmpNo: "+b.getEmpNo());
+			System.out.println("AllocationDate: "+b.getAllocationDate());
+			System.out.println("ReleaseDate: "+b.getReleaseDate());
+			System.out.println("AssetName: "+b.getAssetName());
+			System.out.println("AssetDes: "+b.getAssetDes());
+			System.out.println("Quantity: "+b.getQuantity());
+			System.out.println("Status: "+b.getStatus());
+		}
+		}
+		
+	}
+
+}
+
+-----------------------------------------------------------------------------------------------------------------------------
